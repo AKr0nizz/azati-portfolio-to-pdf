@@ -1,10 +1,16 @@
-from funcs.resize_driver_to_propper_height import resize_driver_to_propper_height
-
 from drivers.windows_chrome_driver import WindowsChromeDriver
 
+from funcs.resize_driver_to_propper_height import resize_driver_to_propper_height
+from funcs.execute_cleanup_scripts import execute_cleanup_scripts
+from funcs.convert_image_to_pdf import convert_image_to_pdf
+
 # Consts
-url = 'http://dev.azati.ai/portfolio/customer-profile-scraping/'
+# url = 'http://dev.azati.ai/portfolio/customer-profile-scraping/'
+url = 'http://dev.azati.ai/advanced-scraping-platform-for-cellular-data-extraction/'
 xpath = '//div[@id="page"]'
+file_name = 'test'
+image_path = './temp/%s.png' % file_name
+pdf_path = './temp/%s.pdf' % file_name
 
 # Create new driver instance
 driver = WindowsChromeDriver()
@@ -15,6 +21,9 @@ driver.driver_init()
 # Get required page
 driver.get_url(url)
 
+# Execute JavaScript to cleanup unnecessary HTML tags
+execute_cleanup_scripts(driver.get_driver())
+
 # Select the biggest element on the page
 biggest_element = driver.select_element(xpath)
 
@@ -22,30 +31,11 @@ biggest_element = driver.select_element(xpath)
 resize_driver_to_propper_height(
     driver.get_driver(), biggest_element)
 
-driver.make_screenshot(biggest_element, './test.png')
+# Get Screenshot in Base64
+# driver.make_screenshot(biggest_element, image_path)
+base64 = driver.get_screenshot_string(biggest_element)
+# convert_image_to_pdf(image_path, pdf_path)
+convert_image_to_pdf(base64, pdf_path)
 
 # Close driver after all
 driver.driver_close()
-
-
-# # Find the element with longest height on page
-# element = driver.find_element("xpath", '//div[@id="page"]')
-
-# # Get element height and resize windows to this height
-# total_height = element.size["height"]
-# driver.set_window_size(settings['windowWidth'], total_height)
-
-# element.screenshot('big-body.png')
-
-# # # Replace window to the longest avaliable height, wait for JS recalculation
-# # driver.set_window_size(12000, 12000)
-# # # driver.set_window_size(settings['windowWidth'], total_height)
-# # time.sleep(settings["waitTimeout"])
-
-# # # Take screenshot
-# # element.screenshot('new_body.png')
-
-# # print(driver.get_window_size())
-
-# # Close driver
-# driver.close()

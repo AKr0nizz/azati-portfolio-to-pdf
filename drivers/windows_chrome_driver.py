@@ -10,7 +10,7 @@ class WindowsChromeDriver(object):
         self.__defaultDriverWidth = 1680
         self.__defaultDriverHeight = 1050
         self.__driverPath = './data/drivers/windows/chromedriver.exe'
-        self.__jsLoadTimeOut = 5
+        self.__jsLoadTimeOut = 2
 
     def driver_init(self):
         # Init driver with custom options
@@ -45,10 +45,16 @@ class WindowsChromeDriver(object):
     def make_screenshot(self, element, path):
         element.screenshot(path)
 
+    def get_screenshot_string(self, element):
+        return element.screenshot_as_base64
+
     def set_driver_size(self, width, height):
         self.driver.set_window_size(width, height)
         # Add small timeout to await JS re-execution
         time.sleep(self.__jsLoadTimeOut)
+
+    def run_script(self, script_string):
+        self.driver.execute_script(script_string)
 
     def driver_close(self):
         self.driver.close()
